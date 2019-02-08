@@ -6,22 +6,47 @@ class Node:
         self.rightChild = None
         self.nodeValue = nodeValue
 
-
     def PrintTree(self):
         if self.leftChild:
             self.leftChild.PrintTree()
         print(self.nodeValue)
+
         if self.rightChild:
             self.rightChild.PrintTree()
 
+    def insertRight(self, node):
+        if self.rightChild == None:
+            self.rightChild = node
+            return True
+        else:
+            return False 
+    def insertLeft(self, node):
+        if self.leftChild == None:
+            self.leftChild = node
+            return True
+        else:
+            return False
+        
+
 
 def main():
-    node = Node(100)
+    node = Node("*")
 
-    nodeRight = Node(12)
+    nodeRight = Node("+")
 
-    node.rightChild = nodeRight
+    nodeChildRight = Node("2")
 
+    nodeChildRight2 = Node("5")
+
+    nodeLeft = Node("125")
+
+    node.insertRight(nodeRight)
+
+    node.insertLeft(nodeLeft)
+
+    nodeRight.insertRight(nodeChildRight)
+
+    nodeRight.insertLeft(nodeChildRight2)
     node.PrintTree()
 
 
