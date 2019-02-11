@@ -1,5 +1,7 @@
 class Node:
 
+    operands = {"+","-","/","*"}
+
     def __init__(self, nodeValue):
 
         self.leftChild = None
@@ -9,10 +11,15 @@ class Node:
     def PrintTree(self):
         if self.leftChild:
             self.leftChild.PrintTree()
-        print(self.nodeValue)
+        print(self.nodeValue , end='')
 
         if self.rightChild:
             self.rightChild.PrintTree()
+
+
+    def isOperand(self):
+        return (self.nodeValue in self.operands)
+
 
     def insertRight(self, node):
         if self.rightChild == None:
