@@ -1,6 +1,7 @@
 import Node
 import random
 import io
+import sys
 
 class ExpressionTree:
 
@@ -63,20 +64,18 @@ class ExpressionTree:
 
     # Possibly naive implementation
     def expSolver(self, val):
-
-        # new = self.toString()
-
         exp = self.expression.replace("x", str(val))
 
 
-        # # print(self.expression + "fuck")
-        # print(new)
-
         print(exp)
 
-        result = eval(exp)
-        # result = 0
+        #We Need to catch divisions by zero
+        try:
+            result = eval(exp)
 
+        except ZeroDivisionError:
+            return sys.maxsize
+    
         return result
 
     #These print an in order traversal of the possible expression       
@@ -114,9 +113,10 @@ class ExpressionTree:
 
 def main():
 
-    tree = ExpressionTree()
+    for i in range(100):
+        tree = ExpressionTree()
     
-    print (tree.expSolver(5))
+        print (tree.expSolver(5))
 
         # print (tree.expression)
 
