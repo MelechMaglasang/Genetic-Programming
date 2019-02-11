@@ -12,6 +12,7 @@ class Node:
         if self.leftChild:
             self.leftChild.PrintTree()
         print(self.nodeValue , end='')
+        
 
         if self.rightChild:
             self.rightChild.PrintTree()

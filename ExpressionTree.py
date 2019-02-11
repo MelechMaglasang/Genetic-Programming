@@ -1,5 +1,6 @@
 import Node
 import random
+import io
 
 class ExpressionTree:
 
@@ -17,6 +18,8 @@ class ExpressionTree:
         self.treeBrancher(curr, depth)
 
         self.nodeFiller(curr)
+
+        self.expression = self.toString()
 
     #recursive branch creator the node inserted will have children possibly 
     def treeBrancher(self, node, depth):
@@ -57,19 +60,72 @@ class ExpressionTree:
 
         if node.rightChild:
             self.nodeFiller(node.rightChild)
-            
+
+    # Possibly naive implementation
+    def expSolver(self, val):
+
+        # new = self.toString()
+
+        exp = self.expression.replace("x", str(val))
+
+
+        # # print(self.expression + "fuck")
+        # print(new)
+
+        print(exp)
+
+        result = eval(exp)
+        # result = 0
+
+        return result
+
+    #These print an in order traversal of the possible expression       
     def PrintTree(self):
         self.root.PrintTree()
+
+
+    def stringHelper(self, output, node):
+        if node.leftChild:
+            self.stringHelper(output,node.leftChild)
+        # print(node.nodeValue , end='')
+        output.write(node.nodeValue)
+        
+
+        if node.rightChild:
+            # node.rightChild.PrintTree()
+            self.stringHelper(output, node.rightChild)
+
+
+    def toString(self):
+    
+        output = io.StringIO()
+
+        # self.root.PrintTree()
+        self.stringHelper(output, self.root)
+
+        contents = output.getvalue()
+
+        output.close()
+
+
+        return contents
 
 
 
 def main():
 
     tree = ExpressionTree()
+    
+    print (tree.expSolver(5))
 
-    tree.PrintTree()
+        # print (tree.expression)
 
     # temp = "9"
+
+
+    # string = "x*x/4-1*2+3/6-4*x/x-9*1+x+x*x*5"
+
+    # print (string.replace('x', '69'))
 
 
     # node = Node.Node("*")
