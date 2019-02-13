@@ -34,6 +34,20 @@ class Node:
             return True
         else:
             return False
+
+    def findDepth(self,node): 
+        if node is None: 
+            return 0 
+
+        else: 
+
+            leftDepth = node.findDepth(node.leftChild) 
+            rightDepth = node.findDepth(node.rightChild) 
+        
+            if (leftDepth > rightDepth): 
+                return leftDepth+1
+            else: 
+                return rightDepth+1
         
 
 

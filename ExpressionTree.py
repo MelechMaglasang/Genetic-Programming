@@ -12,7 +12,7 @@ class ExpressionTree:
 
     def __init__(self):
         #Depth cite that paper later
-        depth = random.randint(1, 17)
+        depth = random.randint(1, 16)
         self.root = Node.Node("&")
 
         curr = self.root
@@ -23,12 +23,16 @@ class ExpressionTree:
 
         self.expression = self.toString()
 
+
+    def findDepth(self):
+        return self.root.findDepth(self.root)
+
     # recursive branch creator the node inserted will have children possibly
     def treeBrancher(self, node, depth):
         if (depth == 0):
             return depth
 
-        if (random.randint(1, 2) == 1):
+        if (random.randint(1, 3) != 1):
             newNode = Node.Node("&")
             node.rightChild = newNode
             self.treeBrancher(node.rightChild, depth - 1)
@@ -111,12 +115,13 @@ class ExpressionTree:
 
 def main():
 
-    for i in range(100):
-        tree = ExpressionTree()
+    tree = ExpressionTree()
 
-        tree.PrintTree()
-        print()
-        print(tree.expSolver(5))
+    tree.PrintTree()
+    print()
+    print(tree.expSolver(0.5))
+
+    print(tree.findDepth())
 
         # print (tree.expression)
 
