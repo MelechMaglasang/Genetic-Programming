@@ -2,6 +2,7 @@ import Node
 import random
 import io
 import sys
+import copy
 
 
 class ExpressionTree:
@@ -17,7 +18,7 @@ class ExpressionTree:
 
         curr = self.root
 
-        self.treeBrancher(curr, depth)
+        self.treeBrancher(curr, depth, depth)
 
         self.nodeFiller(curr)
 
@@ -28,18 +29,19 @@ class ExpressionTree:
         return self.root.findDepth(self.root)
 
     # recursive branch creator the node inserted will have children possibly
-    def treeBrancher(self, node, depth):
+    def treeBrancher(self, node, depth, maxDepth):
+        # node.depth = maxDepth - depth + 1
         if (depth == 0):
             return depth
 
         if (random.randint(1, 3) != 1):
             newNode = Node.Node("&")
             node.rightChild = newNode
-            self.treeBrancher(node.rightChild, depth - 1)
+            self.treeBrancher(node.rightChild, depth - 1, maxDepth)
 
             newNodeLeft = Node.Node("&")
             node.leftChild = newNodeLeft
-            self.treeBrancher(node.leftChild, depth - 1)
+            self.treeBrancher(node.leftChild, depth - 1, maxDepth)
         # else:
 
             # This may be for unary operators
@@ -51,8 +53,28 @@ class ExpressionTree:
 
             # else:
 
-          
+    def grabNodesAtDepth(self, depth):
+        array = []
 
+        self.grabNodesHelper(1, depth, self.root, array)
+
+        return array
+
+
+    def grabNodesHelper(self, currDepth, depth, node, array):
+
+        if(node == None or currDepth > depth):
+            return
+        elif (currDepth == depth and node.rightChild != None and node.leftChild != None):
+            # print(currDepth, node.depth)
+            array.append(node)
+            return
+
+        else:
+            self.grabNodesHelper(currDepth+1, depth, node.leftChild, array)
+            self.grabNodesHelper(currDepth+1, depth, node.rightChild, array)
+
+          
     def nodeFiller(self, node):
         if node.leftChild:
             self.nodeFiller(node.leftChild)
@@ -88,6 +110,7 @@ class ExpressionTree:
     # These print an in order traversal of the possible expression
     def PrintTree(self):
         self.root.PrintTree()
+        print()
 
     def stringHelper(self, output, node):
         if node.leftChild:
@@ -98,6 +121,37 @@ class ExpressionTree:
         if node.rightChild:
             # node.rightChild.PrintTree()
             self.stringHelper(output, node.rightChild)
+
+    def cloneTree(self):
+        newTree = ExpressionTree()
+
+        newRoot = copy.copy(self.root)
+
+        self.cloneTreeHelper(newRoot)
+
+        newTree.root = newRoot
+
+        newTree.expression = newTree.toString()
+        return newTree
+
+    def cloneTreeHelper(self, root):
+  
+        if (root == None):
+            return root
+        temp = copy.copy(root)
+
+        if root.leftChild:
+            temp.leftChild = self.cloneTreeHelper(root.leftChild)
+        
+        if root.rightChild:
+            temp.rightChild = self.cloneTreeHelper(root.rightChild)
+
+        return temp
+
+        
+        
+
+
 
     def toString(self):
 
@@ -121,7 +175,9 @@ def main():
     print()
     print(tree.expSolver(0.5))
 
-    print(tree.findDepth())
+    print(tree.grabNodesAtDepth(2))
+
+    
 
         # print (tree.expression)
 

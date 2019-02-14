@@ -4,6 +4,8 @@ class Node:
 
     def __init__(self, nodeValue):
 
+        # self.depth = -1
+
         self.leftChild = None
         self.rightChild = None
         self.nodeValue = nodeValue
@@ -16,6 +18,8 @@ class Node:
 
         if self.rightChild:
             self.rightChild.PrintTree()
+
+        
 
 
     def isOperand(self):
@@ -42,7 +46,8 @@ class Node:
         else: 
 
             leftDepth = node.findDepth(node.leftChild) 
-            rightDepth = node.findDepth(node.rightChild) 
+            rightDepth = node.findDepth(node.rightChild)
+            
         
             if (leftDepth > rightDepth): 
                 return leftDepth+1
