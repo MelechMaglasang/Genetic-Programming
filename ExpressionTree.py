@@ -108,6 +108,17 @@ class ExpressionTree:
         return result
 
     # These print an in order traversal of the possible expression
+
+    def findFitness(self, data):
+        fitness = 0
+        for item in data:
+            result = (self.expSolver(item[0]) - item[1]) ** 2
+
+            fitness += result
+
+
+        return fitness/len(data)
+
     def PrintTree(self):
         self.root.PrintTree()
         print()
@@ -147,11 +158,6 @@ class ExpressionTree:
             temp.rightChild = self.cloneTreeHelper(root.rightChild)
 
         return temp
-
-        
-        
-
-
 
     def toString(self):
 

@@ -126,20 +126,20 @@ class GeneticProgramming:
 
         bigData = []
 
+        bestHere = None
+
         for tree in population:
 
-            fitness = 0
+            fitness = tree.findFitness(data)
+            treeScorePair = (tree,fitness)
 
-            for item in data:
-                result = (tree.expSolver(item[0]) - item[1]) ** 2
+            if (bestHere == None or bestHere[1] > treeScorePair[1]):
+                bestHere = treeScorePair
+            
 
-                fitness += result
-
-
-            treeScorePair = (tree, fitness/len(data))
             bigData.append(treeScorePair)
 
-        n = 1
+        n = 25
   
         # using list comprehension 
         final = [bigData[i * n:(i + 1) * n] for i in range((len(bigData) + n - 1) // n )]
@@ -150,7 +150,7 @@ class GeneticProgramming:
             winners.append(min(section, key = lambda t: t[1]))
 
 
-        return winners
+        return (winners, bestHere)
 
         
 
@@ -163,11 +163,71 @@ class GeneticProgramming:
 
             population.append(tree)
 
+        bestEver = None
+
         #Maybe do a while loop but for now im doing a for loop
-        for i in range(1):
+        for i in range(100):
             newPopulation = []
 
-            champions = self.tournamentSelection(population, data)
+            outcome = self.tournamentSelection(population, data)
+
+            champions = outcome[0]
+            bestInGen = outcome[1]
+
+            if (bestEver == None or bestEver[1] > bestInGen[1]):
+                bestEver = bestInGen
+
+            
+
+            #mate the first 96
+            for i in range(len(champions)):
+                currTree = champions[i][0]
+
+                otherTrees = champions[:]
+
+                otherTrees.pop(i)
+
+                for j in range(len(otherTrees)):
+                    otherTree = champions[i][0]
+                    
+                    for k in range(4):
+                        childrenTrees = self.crossOver(currTree, otherTree)
+
+                        #Add mutation perentage here
+                        newPopulation.append(childrenTrees[0])
+                        newPopulation.append(childrenTrees[1])
+
+            #mate using the best ever seen
+            championTree = bestEver[0]
+
+            for i in range(len(champions)):
+                otherTree = champions[i][0]
+
+                childrenTrees = self.crossOver(championTree, otherTree)
+
+                childTreeA = childrenTrees[0]
+                childTreeB = childrenTrees[1]
+
+                if (childTreeA.findFitness(data) <= childTreeB.findFitness(data) ):
+                    newPopulation.append(childTreeA)
+                else:
+                    newPopulation.append(childTreeB)
+
+            population = newPopulation
+
+
+
+        finalPopulation = population
+
+        print(len(finalPopulation))
+
+
+
+
+
+
+
+            # print(champions)
 
 
 
@@ -222,7 +282,7 @@ def main():
     data = [(-0.66, 18.37), (1, 2)]
 
 
-    player.symbReg(4, data)
+    player.symbReg(100, data)
 
 
 
