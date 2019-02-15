@@ -118,68 +118,113 @@ class GeneticProgramming:
         else:
             mutatee.rightChild = mutagen
             
-
         return newTree
 
+    def tournamentSelection(self, population, data):
+        #Assuming data will be formatted in the way i want it to
+        random.shuffle(population)
+
+        bigData = []
+
+        for tree in population:
+
+            fitness = 0
+
+            for item in data:
+                result = (tree.expSolver(item[0]) - item[1]) ** 2
+
+                fitness += result
+
+
+            treeScorePair = (tree, fitness/len(data))
+            bigData.append(treeScorePair)
+
+        n = 1
+  
+        # using list comprehension 
+        final = [bigData[i * n:(i + 1) * n] for i in range((len(bigData) + n - 1) // n )]
+
+        # print(final[0])
+        winners = []
+        for section in final:
+            winners.append(min(section, key = lambda t: t[1]))
+
+
+        return winners
+
+        
+
+    def symbReg(self, size, data):
+
+        population = []
+
+        for i in range (size):
+            tree = ExpressionTree.ExpressionTree()
+
+            population.append(tree)
+
+        #Maybe do a while loop but for now im doing a for loop
+        for i in range(1):
+            newPopulation = []
+
+            champions = self.tournamentSelection(population, data)
+
+
 
 
         
 
 
-
-
-        
-
-        
-
-
-
-
-            
-
-
-        
 
 
 def main():
-    treeA = ExpressionTree.ExpressionTree()
+    # treeA = ExpressionTree.ExpressionTree()
+
+    # # print(treeA.toString())
+
+    # treeB = ExpressionTree.ExpressionTree()
+
+    # player = GeneticProgramming(10)
+
+    # # print (newTree.toString())
+
+
+
+    # setty = player.crossOver(treeA, treeB)
 
     # print(treeA.toString())
-
-    treeB = ExpressionTree.ExpressionTree()
-
-    player = GeneticProgramming(10)
-
-    # print (newTree.toString())
+    # print(setty[0].toString())
 
 
 
-    setty = player.crossOver(treeA, treeB)
+    # print(treeB.toString())
+    # print(setty[1].toString())
 
-    print(treeA.toString())
-    print(setty[0].toString())
+    # gen2A =setty[0]
+    # gen2B = setty[1]
 
+    # setty2 = player.crossOver(gen2A, gen2B)
 
-
-    print(treeB.toString())
-    print(setty[1].toString())
-
-    gen2A =setty[0]
-    gen2B = setty[1]
-
-    setty2 = player.crossOver(gen2A, gen2B)
-
-    print(gen2A.toString())
-    print(setty2[0].toString())
+    # print(gen2A.toString())
+    # print(setty2[0].toString())
 
 
 
-    print(gen2B.toString())
-    print(setty2[1].toString())
+    # print(gen2B.toString())
+    # print(setty2[1].toString())
 
-    mutatedTree = player.mutate(setty2[1])
+    # mutatedTree = player.mutate(setty2[1])
 
-    print(mutatedTree.toString())
+    # print(mutatedTree.toString())
+
+    player = GeneticProgramming(100)
+
+    data = [(-0.66, 18.37), (1, 2)]
+
+
+    player.symbReg(4, data)
+
+
 
 
 
