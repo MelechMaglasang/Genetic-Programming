@@ -14,7 +14,7 @@ class ExpressionTree:
     def __init__(self):
         #Depth cite that paper later
         depth = random.randint(1, 16)
-        self.root = Node.Node("&")
+        self.root = Node.Node()
 
         curr = self.root
 
@@ -35,11 +35,11 @@ class ExpressionTree:
             return depth
 
         if (random.randint(1, 3) != 1):
-            newNode = Node.Node("&")
+            newNode = Node.Node()
             node.rightChild = newNode
             self.treeBrancher(node.rightChild, depth - 1, maxDepth)
 
-            newNodeLeft = Node.Node("&")
+            newNodeLeft = Node.Node()
             node.leftChild = newNodeLeft
             self.treeBrancher(node.leftChild, depth - 1, maxDepth)
         # else:
@@ -47,7 +47,7 @@ class ExpressionTree:
             # This may be for unary operators
 
             # if (random.randint(1,2) == 1000):
-            #     newNode = Node.Node("&")
+            #     newNode = Node.Node()
             #     node.rightChild = newNode
             #     self.treeBrancher(node.rightChild, depth -1)
 

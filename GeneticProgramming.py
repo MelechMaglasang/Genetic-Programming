@@ -1,4 +1,5 @@
 import ExpressionTree
+import Node
 import random
 import copy
 
@@ -78,6 +79,62 @@ class GeneticProgramming:
         newTreeB.expression = newTreeB.toString()
             
         return (newTreeA, newTreeB)
+
+
+    def mutate(self, tree):
+        depth = tree.findDepth()
+
+        newTree = copy.deepcopy(tree)
+
+        mutagen = Node.Node()
+        leftLeaf = Node.Node()
+        rightLeaf = Node.Node()
+
+        mutagen.leftChild = leftLeaf
+        mutagen.rightChild = rightLeaf
+
+        mutagen.nodeValue = random.sample(mutagen.operands, 1)[0] 
+
+        if (random.randint(1, 3) == 1):
+            leftLeaf.nodeValue = "x"
+        else:
+            leftLeaf.nodeValue = random.sample(leftLeaf.leafVals, 1)[0]
+
+        if (random.randint(1, 3) == 1):
+            rightLeaf.nodeValue = "x"
+        else:
+            rightLeaf.nodeValue = random.sample(rightLeaf.leafVals, 1)[0]
+
+        #For the leafs
+        if (depth == 1):
+            mutatee = newTree.root
+        else:
+            mutatee = random.choice(newTree.grabNodesAtDepth(depth - 1))
+
+        if (random.randint(1, 2) == 1):
+                
+            mutatee.leftChild = mutagen
+        
+        else:
+            mutatee.rightChild = mutagen
+            
+
+        return newTree
+
+
+
+        
+
+
+
+
+        
+
+        
+
+
+
+
             
 
 
@@ -106,6 +163,23 @@ def main():
 
     print(treeB.toString())
     print(setty[1].toString())
+
+    gen2A =setty[0]
+    gen2B = setty[1]
+
+    setty2 = player.crossOver(gen2A, gen2B)
+
+    print(gen2A.toString())
+    print(setty2[0].toString())
+
+
+
+    print(gen2B.toString())
+    print(setty2[1].toString())
+
+    mutatedTree = player.mutate(setty2[1])
+
+    print(mutatedTree.toString())
 
 
 
