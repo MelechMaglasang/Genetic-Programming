@@ -3,6 +3,11 @@ import Node
 import random
 import copy
 
+#For csv parsing
+import pandas as pd
+import numpy as np
+import sklearn
+from sklearn.model_selection import train_test_split
 
 class GeneticProgramming:
 
@@ -117,6 +122,8 @@ class GeneticProgramming:
         
         else:
             mutatee.rightChild = mutagen
+
+        newTree.expression = newTree.toString()
             
         return newTree
 
@@ -139,7 +146,7 @@ class GeneticProgramming:
 
             bigData.append(treeScorePair)
 
-        n = 25
+        n = int (len(population)/4)
   
         # using list comprehension 
         final = [bigData[i * n:(i + 1) * n] for i in range((len(bigData) + n - 1) // n )]
@@ -154,7 +161,7 @@ class GeneticProgramming:
 
         
 
-    def symbReg(self, size, data):
+    def symbReg(self, size, gens, data):
 
         population = []
 
@@ -166,7 +173,8 @@ class GeneticProgramming:
         bestEver = None
 
         #Maybe do a while loop but for now im doing a for loop
-        for i in range(100):
+        for m in range(gens):
+            print(m)
             newPopulation = []
 
             outcome = self.tournamentSelection(population, data)
@@ -193,9 +201,14 @@ class GeneticProgramming:
                     for k in range(4):
                         childrenTrees = self.crossOver(currTree, otherTree)
 
-                        #Add mutation perentage here
-                        newPopulation.append(childrenTrees[0])
-                        newPopulation.append(childrenTrees[1])
+                        for child in childrenTrees:
+                            if (random.randint(1,1000) == 42):
+                                mutatedChild = self.mutate(child)
+                                newPopulation.append(mutatedChild)
+                            else:
+                                newPopulation.append(child)
+
+
 
             #mate using the best ever seen
             championTree = bestEver[0]
@@ -205,9 +218,15 @@ class GeneticProgramming:
 
                 childrenTrees = self.crossOver(championTree, otherTree)
 
+                for child in childrenTrees:
+                    if (random.randint(1,1000) == 42):
+                        child = self.mutate(child)
+
+
                 childTreeA = childrenTrees[0]
                 childTreeB = childrenTrees[1]
-
+                
+                
                 if (childTreeA.findFitness(data) <= childTreeB.findFitness(data) ):
                     newPopulation.append(childTreeA)
                 else:
@@ -219,70 +238,39 @@ class GeneticProgramming:
 
         finalPopulation = population
 
-        print(len(finalPopulation))
+        finalFitness = []
 
+        for tree in population:
+            finalFitness.append((tree, tree.findFitness(data)))
 
+        # print(len(finalPopulation))
 
-
-
-
-
-            # print(champions)
-
-
-
-
-        
+        return min(finalFitness, key = lambda t: t[1])
 
 
 
 
 def main():
-    # treeA = ExpressionTree.ExpressionTree()
 
-    # # print(treeA.toString())
+    data = pd.read_csv('dataset1.csv')
 
-    # treeB = ExpressionTree.ExpressionTree()
-
-    # player = GeneticProgramming(10)
-
-    # # print (newTree.toString())
+    # print(len(data))
 
 
-
-    # setty = player.crossOver(treeA, treeB)
-
-    # print(treeA.toString())
-    # print(setty[0].toString())
-
-
-
-    # print(treeB.toString())
-    # print(setty[1].toString())
-
-    # gen2A =setty[0]
-    # gen2B = setty[1]
-
-    # setty2 = player.crossOver(gen2A, gen2B)
-
-    # print(gen2A.toString())
-    # print(setty2[0].toString())
-
-
-
-    # print(gen2B.toString())
-    # print(setty2[1].toString())
-
-    # mutatedTree = player.mutate(setty2[1])
-
-    # print(mutatedTree.toString())
+    trainingSet, testSet = train_test_split(data, test_size=0.2)
+    
 
     player = GeneticProgramming(100)
 
-    data = [(-0.66, 18.37), (1, 2)]
+    # data = []
 
+    # for i in range(20):
+    #     data.append((.66, 18))
 
-    player.symbReg(100, data)
+    
+    winner = player.symbReg(100, 3,data)
+
+    print (winner[0].toString())
 
 
 

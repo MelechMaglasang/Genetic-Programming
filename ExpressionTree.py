@@ -4,6 +4,9 @@ import io
 import sys
 import copy
 
+import pandas as pd
+import numpy as np
+
 
 class ExpressionTree:
 
@@ -111,8 +114,8 @@ class ExpressionTree:
 
     def findFitness(self, data):
         fitness = 0
-        for item in data:
-            result = (self.expSolver(item[0]) - item[1]) ** 2
+        for i in range (len(data)):
+            result = (self.expSolver(data.loc[i]["x"]) - data.loc[i]["x"] ) ** 2
 
             fitness += result
 
