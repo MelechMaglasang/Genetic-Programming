@@ -80,14 +80,15 @@ class GeneticProgramming:
         if (newTreeA.root == None or newTreeB.root == None):
             print ("whoa")
 
-        newTreeA.expression = newTreeA.toString()
-        newTreeB.expression = newTreeB.toString()
+        # newTreeA.expression = newTreeA.toString()
+        # newTreeB.expression = newTreeB.toString()
             
         return (newTreeA, newTreeB)
 
 
     def mutate(self, tree):
         depth = tree.findDepth()
+
 
         newTree = copy.deepcopy(tree)
 
@@ -123,7 +124,7 @@ class GeneticProgramming:
         else:
             mutatee.rightChild = mutagen
 
-        newTree.expression = newTree.toString()
+        # newTree.expression = newTree.toString()
             
         return newTree
 
@@ -156,7 +157,7 @@ class GeneticProgramming:
         for section in final:
             winners.append(min(section, key = lambda t: t[1]))
 
-
+        print (winners)
         return (winners, bestHere)
 
         
@@ -255,12 +256,23 @@ def main():
     data = pd.read_csv('dataset1.csv')
 
     # print(len(data))
-
-
     trainingSet, testSet = train_test_split(data, test_size=0.2)
     
 
     player = GeneticProgramming(100)
+
+    # trainingArray = np.array()
+    # testArray = np.array()
+
+
+    # for index, row in trainingSet.iterrows():
+    #     trainingArray.append((row['x'],row['f(x)']))
+    trainingArray = trainingSet.values
+    testArray = testSet.values
+
+    print(trainingArray) 
+
+    print (trainingArray[0][1])
 
     # data = []
 
@@ -268,7 +280,22 @@ def main():
     #     data.append((.66, 18))
 
     
-    winner = player.symbReg(100, 3,data)
+    winner = player.symbReg(100, 10, trainingArray)
+    # print (data.loc[0]["x"])
+
+    # population = []
+
+    # for i in range (100):
+    #     tree = ExpressionTree.ExpressionTree()
+
+    #     population.append(tree)
+
+    #     # print (tree.findFitness(trainingArray))
+
+    # # tree = ExpressionTree.ExpressionTree()
+    # player.tournamentSelection(population, trainingArray)
+    # tree.findFitness(data)
+
 
     print (winner[0].toString())
 

@@ -16,7 +16,7 @@ class ExpressionTree:
 
     def __init__(self):
         #Depth cite that paper later
-        depth = random.randint(1, 16)
+        depth = random.randint(1, 10)
         self.root = Node.Node()
 
         curr = self.root
@@ -98,24 +98,61 @@ class ExpressionTree:
             self.nodeFiller(node.rightChild)
 
     # Possibly naive implementation
-    def expSolver(self, val):
-        exp = self.expression.replace("x", str(val))
+    # def expSolver(self, val):
+    #     exp = self.expression.replace("x", str(val))
 
-        # We Need to catch divisions by zero, I took out the zero as of now
-        try:
-            result = eval(exp)
+    #     # We Need to catch divisions by zero, I took out the zero as of now
+    #     try:
+    #         result = eval(exp)
 
-        except ZeroDivisionError:
-            return sys.maxsize
+    #     except ZeroDivisionError:
+    #         return sys.maxsize
 
-        return result
+    #     return result
+
+    def evaluateExpressionTree(self, root, val): 
+  
+        # empty tree 
+        if root is None: 
+            return 0
+    
+        # leaf node 
+        if root.leftChild is None and root.rightChild is None: 
+            if (root.nodeValue == 'x'):
+                return val
+            else:
+                return int(root.nodeValue) 
+    
+        # evaluate left tree 
+        leftSum = self.evaluateExpressionTree(root.leftChild,val) 
+    
+        # evaluate right tree 
+        rightSum = self.evaluateExpressionTree(root.rightChild,val) 
+    
+        # check which operation to apply 
+        if root.nodeValue == '+': 
+            return leftSum + rightSum
+        
+        elif root.nodeValue == '-': 
+            return leftSum - rightSum 
+        
+        elif root.nodeValue == '*': 
+            return leftSum * rightSum
+        
+        else:
+            if rightSum == 0:
+                return 1
+            else: 
+                return leftSum / rightSum
 
     # These print an in order traversal of the possible expression
 
     def findFitness(self, data):
         fitness = 0
-        for i in range (len(data)):
-            result = (self.expSolver(data.loc[i]["x"]) - data.loc[i]["x"] ) ** 2
+        
+        for i in range(len(data)):
+            result = (self.evaluateExpressionTree(self.root,data[i][0]) - data[i][1] ) ** 2
+            
 
             fitness += result
 
@@ -136,31 +173,31 @@ class ExpressionTree:
             # node.rightChild.PrintTree()
             self.stringHelper(output, node.rightChild)
 
-    def cloneTree(self):
-        newTree = ExpressionTree()
+    # def cloneTree(self):
+    #     newTree = ExpressionTree()
 
-        newRoot = copy.copy(self.root)
+    #     newRoot = copy.copy(self.root)
 
-        self.cloneTreeHelper(newRoot)
+    #     self.cloneTreeHelper(newRoot)
 
-        newTree.root = newRoot
+    #     newTree.root = newRoot
 
-        newTree.expression = newTree.toString()
-        return newTree
+    #     newTree.expression = newTree.toString()
+    #     return newTree
 
-    def cloneTreeHelper(self, root):
+    # def cloneTreeHelper(self, root):
   
-        if (root == None):
-            return root
-        temp = copy.copy(root)
+    #     if (root == None):
+    #         return root
+    #     temp = copy.copy(root)
 
-        if root.leftChild:
-            temp.leftChild = self.cloneTreeHelper(root.leftChild)
+    #     if root.leftChild:
+    #         temp.leftChild = self.cloneTreeHelper(root.leftChild)
         
-        if root.rightChild:
-            temp.rightChild = self.cloneTreeHelper(root.rightChild)
+    #     if root.rightChild:
+    #         temp.rightChild = self.cloneTreeHelper(root.rightChild)
 
-        return temp
+    #     return temp
 
     def toString(self):
 
@@ -182,9 +219,20 @@ def main():
 
     tree.PrintTree()
     print()
-    print(tree.expSolver(0.5))
+    # print(tree.expSolver(0.5))
 
     print(tree.grabNodesAtDepth(2))
+
+    population = []
+
+    for i in range (100):
+        tree = ExpressionTree()
+
+        population.append(tree)
+
+    for tree in population:
+        print (tree.evaluateExpressionTree(tree.root, .5))
+
 
     
 
