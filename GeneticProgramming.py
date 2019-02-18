@@ -9,12 +9,15 @@ import numpy as np
 import sklearn
 from sklearn.model_selection import train_test_split
 
+
+
+
 class GeneticProgramming:
 
     def __init__(self, numGen):
         self.numGen = numGen
         
-    def crossOver(self, treeA, treeB):
+    def crossOver(self, treeA, treeB,data):
         depthA = treeA.findDepth()
         depthB = treeB.findDepth()
 
@@ -77,8 +80,9 @@ class GeneticProgramming:
             else:
                 crossingA.rightChild, crossingB.rightChild = crossingB.rightChild, crossingA.rightChild
 
-        if (newTreeA.root == None or newTreeB.root == None):
-            print ("whoa")
+        newTreeA.fitness = newTreeA.findFitness(data)
+        newTreeB.fitness = newTreeB.findFitness(data)
+
 
         # newTreeA.expression = newTreeA.toString()
         # newTreeB.expression = newTreeB.toString()
@@ -86,7 +90,7 @@ class GeneticProgramming:
         return (newTreeA, newTreeB)
 
 
-    def mutate(self, tree):
+    def mutate(self, tree,data):
         depth = tree.findDepth()
 
 
@@ -125,40 +129,57 @@ class GeneticProgramming:
             mutatee.rightChild = mutagen
 
         # newTree.expression = newTree.toString()
+        newTree.fitness = newTree.findFitness(data)
             
         return newTree
 
-    def tournamentSelection(self, population, data):
+    def tournamentSelection(self, population):
         #Assuming data will be formatted in the way i want it to
-        random.shuffle(population)
 
-        bigData = []
+        # print (len(population) / 5)
+        sampleTrees = random.sample(population, int (len(population) * .2 ))
 
-        bestHere = None
+        random.shuffle(sampleTrees)
 
-        for tree in population:
 
-            fitness = tree.findFitness(data)
-            treeScorePair = (tree,fitness)
 
-            if (bestHere == None or bestHere[1] > treeScorePair[1]):
-                bestHere = treeScorePair
+        # S = [1,2,3,4,5,6,7]
+        
+        # index = random.randint(1, len(sampleTrees)-1)
+        # List1 = sampleTrees[index:]
+        # List2 = sampleTrees[:index]
+
+        # for tree in population:
+
+        #     fitness = tree.findFitness(data)
+        #     treeScorePair = (tree,fitness)
+
+        #     if (bestHere == None or bestHere[1] > treeScorePair[1]):
+        #         bestHere = treeScorePair
             
 
-            bigData.append(treeScorePair)
+        #     bigData.append(treeScorePair)
 
-        n = int (len(population)/4)
+        n = int (len(population)/2)
   
         # using list comprehension 
-        final = [bigData[i * n:(i + 1) * n] for i in range((len(bigData) + n - 1) // n )]
+        final = [population[i * n:(i + 1) * n] for i in range((len(population) + n - 1) // n )]
 
         # print(final[0])
-        winners = []
-        for section in final:
-            winners.append(min(section, key = lambda t: t[1]))
 
+        winners = []
+        # losers = []
+        for section in final:
+            winners.append(min(section, key = lambda t: t.fitness))
+            # losers.append(max(section, key = lambda t: t.fitness))
+
+
+        # if (winners[0].fitness > winners[1].fitness):
+        #     bestHere = winners[1]
+        # else:
+        #     bestHere = winners[0]
         print (winners)
-        return (winners, bestHere)
+        return (winners)
 
         
 
@@ -167,86 +188,132 @@ class GeneticProgramming:
         population = []
 
         for i in range (size):
-            tree = ExpressionTree.ExpressionTree()
+            tree = ExpressionTree.ExpressionTree(data)
 
             population.append(tree)
-
+        
         bestEver = None
-
         #Maybe do a while loop but for now im doing a for loop
         for m in range(gens):
             print(m)
+
             newPopulation = []
 
-            outcome = self.tournamentSelection(population, data)
 
-            champions = outcome[0]
-            bestInGen = outcome[1]
 
-            if (bestEver == None or bestEver[1] > bestInGen[1]):
-                bestEver = bestInGen
+            print (len(newPopulation))
 
+            while (len(newPopulation) < 90):
+                
+                champions = self.tournamentSelection(population)
+
+                childTrees = self.crossOver(champions[0], champions[1],data)
+
+                for child in childTrees:
+                    newPopulation.append(child)
+
+                # for champ in champions:
+                #     newPopulation.append(champ)
+        
+            print (len(newPopulation))
+
+                # treesToMutate = random.sample(population, int (len(population) * .20 ))
+
+            # for i in range(5):
+            #     currTree = min(treesToMutate, key = lambda t: t.fitness)
+
+            #     newTree = self.mutate(currTree,data)
+
+            #     newPopulation.append(newTree)
+            #     treesToMutate.pop(currTree)
+
+            bestInGeneration = min(population, key = lambda t: t.fitness)
+
+            population.pop(population.index(bestInGeneration))
+
+            if (bestEver == None or bestEver.fitness > bestInGeneration.fitness):
+                bestEver = bestInGeneration
+            newPopulation.append(bestEver)
+
+
+            for i in range(4):
+                curr = min(population, key = lambda t: t.fitness)
+
+                population.pop(population.index(curr))
+                newPopulation.append(curr)
+
+            for i in range(5):
+                curr = min(population, key = lambda t: t.fitness)
+
+                population.pop(population.index(curr))
+                mutatee = self.mutate(curr, data)
+                newPopulation.append(mutatee)
+
+
+            print(len(newPopulation))
+            
+            
+            population = newPopulation
             
 
-            #mate the first 96
-            for i in range(len(champions)):
-                currTree = champions[i][0]
+            print(min(population, key = lambda t: t.fitness).toString())
+            print(min(population, key = lambda t: t.fitness).fitness)
 
-                otherTrees = champions[:]
 
-                otherTrees.pop(i)
+            # for i in range(len(champions)):
+            #     currTree = champions[i][0]
 
-                for j in range(len(otherTrees)):
-                    otherTree = champions[i][0]
+            #     otherTrees = champions[:]
+
+            #     otherTrees.pop(i)
+
+            #     for j in range(len(otherTrees)):
+            #         otherTree = champions[i][0]
                     
-                    for k in range(4):
-                        childrenTrees = self.crossOver(currTree, otherTree)
+            #         for k in range(4):
+            #             childrenTrees = self.crossOver(currTree, otherTree)
 
-                        for child in childrenTrees:
-                            if (random.randint(1,1000) == 42):
-                                mutatedChild = self.mutate(child)
-                                newPopulation.append(mutatedChild)
-                            else:
-                                newPopulation.append(child)
-
-
-
-            #mate using the best ever seen
-            championTree = bestEver[0]
-
-            for i in range(len(champions)):
-                otherTree = champions[i][0]
-
-                childrenTrees = self.crossOver(championTree, otherTree)
-
-                for child in childrenTrees:
-                    if (random.randint(1,1000) == 42):
-                        child = self.mutate(child)
+            #             for child in childrenTrees:
+            #                 if (random.randint(1,1000) == 42):
+            #                     mutatedChild = self.mutate(child)
+            #                     newPopulation.append(mutatedChild)
+            #                 else:
+            #                     newPopulation.append(child)
 
 
-                childTreeA = childrenTrees[0]
-                childTreeB = childrenTrees[1]
+
+            # #mate using the best ever seen
+            # championTree = bestEver[0]
+
+            # for i in range(len(champions)):
+            #     otherTree = champions[i][0]
+
+            #     childrenTrees = self.crossOver(championTree, otherTree)
+
+            #     for child in childrenTrees:
+            #         if (random.randint(1,1000) == 42):
+            #             child = self.mutate(child)
+
+
+            #     childTreeA = childrenTrees[0]
+            #     childTreeB = childrenTrees[1]
                 
                 
-                if (childTreeA.findFitness(data) <= childTreeB.findFitness(data) ):
-                    newPopulation.append(childTreeA)
-                else:
-                    newPopulation.append(childTreeB)
+            #     if (childTreeA.findFitness(data) <= childTreeB.findFitness(data) ):
+            #         newPopulation.append(childTreeA)
+            #     else:
+            #         newPopulation.append(childTreeB)
 
-            population = newPopulation
+    
 
+        # finalFitness = []
 
+        # for tree in population:
+        #     finalFitness.append((tree, tree.findFitness(data)))
 
-        finalPopulation = population
+        # # print(len(finalPopulation))
 
-        finalFitness = []
-
-        for tree in population:
-            finalFitness.append((tree, tree.findFitness(data)))
-
-        # print(len(finalPopulation))
-
-        return min(finalFitness, key = lambda t: t[1])
+        return min(population, key = lambda t: t.fitness)
 
 
 
@@ -264,15 +331,14 @@ def main():
     # trainingArray = np.array()
     # testArray = np.array()
 
+    
 
     # for index, row in trainingSet.iterrows():
     #     trainingArray.append((row['x'],row['f(x)']))
     trainingArray = trainingSet.values
+
+    # trainingArray = [[16.16],[16,16]]
     testArray = testSet.values
-
-    print(trainingArray) 
-
-    print (trainingArray[0][1])
 
     # data = []
 
@@ -280,24 +346,42 @@ def main():
     #     data.append((.66, 18))
 
     
-    winner = player.symbReg(100, 10, trainingArray)
+    winner = player.symbReg(100, 1, trainingArray)
+
+    print (winner.toString())
+    print(winner.fitness)
+    
+
+    
     # print (data.loc[0]["x"])
 
     # population = []
 
-    # for i in range (100):
-    #     tree = ExpressionTree.ExpressionTree()
+    # for i in range (10):
+    #     tree = ExpressionTree.ExpressionTree(trainingArray)
 
     #     population.append(tree)
 
-    #     # print (tree.findFitness(trainingArray))
+        # print (tree.findFitness(trainingArray))
 
-    # # tree = ExpressionTree.ExpressionTree()
-    # player.tournamentSelection(population, trainingArray)
+    # tree = ExpressionTree.ExpressionTree(trainingArray)
+    # treeb = ExpressionTree.ExpressionTree(trainingArray)
+
+    # setty = player.crossOver(tree, treeb,trainingArray)
+
+    # print(tree.fitness)
+    # print(setty[0].fitness)
+
+    # print(treeb.fitness)
+    # print(setty[1].fitness)
+
+
+
+    # print (player.tournamentSelection(population))
     # tree.findFitness(data)
 
 
-    print (winner[0].toString())
+    
 
 
 

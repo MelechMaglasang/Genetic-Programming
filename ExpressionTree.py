@@ -6,15 +6,15 @@ import copy
 
 import pandas as pd
 import numpy as np
-
+from sklearn.metrics import mean_squared_error
 
 class ExpressionTree:
 
     operands = {"+", "-", "/", "*"}
     #Discussion about multiply and divide being basically the same thing so we cacn add the zero if we get rid of divide
-    leafVals = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
+    leafVals = {"-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3","4", "5"}
 
-    def __init__(self):
+    def __init__(self, data):
         #Depth cite that paper later
         depth = random.randint(1, 10)
         self.root = Node.Node()
@@ -25,7 +25,9 @@ class ExpressionTree:
 
         self.nodeFiller(curr)
 
-        self.expression = self.toString()
+        self.fitness = self.findFitness(data)
+
+        # self.expression = self.toString()
 
 
     def findDepth(self):
@@ -148,16 +150,18 @@ class ExpressionTree:
     # These print an in order traversal of the possible expression
 
     def findFitness(self, data):
-        fitness = 0
+        # fitness = 0
         
+        y_true = []
+        y_pred = []
         for i in range(len(data)):
-            result = (self.evaluateExpressionTree(self.root,data[i][0]) - data[i][1] ) ** 2
-            
+            y_pred.append(self.evaluateExpressionTree(self.root,data[i][0]))
+            y_true.append(data[i][1])
+            # result = (self.evaluateExpressionTree(self.root,data[i][0]) - data[i][1] ) ** 2
 
-            fitness += result
-
-
-        return fitness/len(data)
+            # result = (mean_squared_error( data[i][1] , self.evaluateExpressionTree(self.root,data[i][0])))
+        # return fitness/len(data)
+        return mean_squared_error(y_true, y_pred)
 
     def PrintTree(self):
         self.root.PrintTree()
