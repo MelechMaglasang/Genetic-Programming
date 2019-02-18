@@ -84,8 +84,8 @@ class GeneticProgramming:
         newTreeB.fitness = newTreeB.findFitness(data)
 
 
-        # newTreeA.expression = newTreeA.toString()
-        # newTreeB.expression = newTreeB.toString()
+        newTreeA.expression = newTreeA.toString()
+        newTreeB.expression = newTreeB.toString()
             
         return (newTreeA, newTreeB)
 
@@ -105,12 +105,12 @@ class GeneticProgramming:
 
         mutagen.nodeValue = random.sample(mutagen.operands, 1)[0] 
 
-        if (random.randint(1, 3) == 1):
+        if (random.randint(1, 3) != 1):
             leftLeaf.nodeValue = "x"
         else:
             leftLeaf.nodeValue = random.sample(leftLeaf.leafVals, 1)[0]
 
-        if (random.randint(1, 3) == 1):
+        if (random.randint(1, 3) != 1):
             rightLeaf.nodeValue = "x"
         else:
             rightLeaf.nodeValue = random.sample(rightLeaf.leafVals, 1)[0]
@@ -128,7 +128,7 @@ class GeneticProgramming:
         else:
             mutatee.rightChild = mutagen
 
-        # newTree.expression = newTree.toString()
+        newTree.expression = newTree.toString()
         newTree.fitness = newTree.findFitness(data)
             
         return newTree
@@ -137,9 +137,12 @@ class GeneticProgramming:
         #Assuming data will be formatted in the way i want it to
 
         # print (len(population) / 5)
-        sampleTrees = random.sample(population, int (len(population) * .2 ))
+        sampleTree1 = random.sample(population, int(len(population) * .1 ))
+        sampleTree2 = random.sample(population, int(len(population) * .1 ))
 
-        random.shuffle(sampleTrees)
+
+
+        # random.shuffle(sampleTrees)
 
 
 
@@ -160,17 +163,21 @@ class GeneticProgramming:
 
         #     bigData.append(treeScorePair)
 
-        n = int (len(population)/2)
+        # n = int (len(population)/2)
   
         # using list comprehension 
-        final = [population[i * n:(i + 1) * n] for i in range((len(population) + n - 1) // n )]
+        # final = [population[i * n:(i + 1) * n] for i in range((len(population) + n - 1) // n )]
 
         # print(final[0])
 
         winners = []
+        # winners.append(sampleTree1)
+        # winners.append(sampleTree2)
+        winners.append(min(sampleTree1, key = lambda t: t.fitness))
+        winners.append(min(sampleTree2, key = lambda t: t.fitness))
         # losers = []
-        for section in final:
-            winners.append(min(section, key = lambda t: t.fitness))
+        # for section in final:
+        #     winners.append(min(section, key = lambda t: t.fitness))
             # losers.append(max(section, key = lambda t: t.fitness))
 
 
@@ -178,8 +185,9 @@ class GeneticProgramming:
         #     bestHere = winners[1]
         # else:
         #     bestHere = winners[0]
-        print (winners)
-        return (winners)
+        # print ("winners",winners[0].fitness, winners[1].fitness)
+
+        return winners
 
         
 
@@ -199,11 +207,7 @@ class GeneticProgramming:
 
             newPopulation = []
 
-
-
-            print (len(newPopulation))
-
-            while (len(newPopulation) < 90):
+            while (len(newPopulation) <= 88):
                 
                 champions = self.tournamentSelection(population)
 
@@ -215,8 +219,6 @@ class GeneticProgramming:
                 # for champ in champions:
                 #     newPopulation.append(champ)
         
-            print (len(newPopulation))
-
                 # treesToMutate = random.sample(population, int (len(population) * .20 ))
 
             # for i in range(5):
@@ -242,21 +244,20 @@ class GeneticProgramming:
                 population.pop(population.index(curr))
                 newPopulation.append(curr)
 
-            for i in range(5):
-                curr = min(population, key = lambda t: t.fitness)
+            randoMutates = random.sample(population, 5)
 
-                population.pop(population.index(curr))
-                mutatee = self.mutate(curr, data)
+            for tree in randoMutates:
+                # curr = min(population, key = lambda t: t.fitness)
+
+                # population.pop(population.index(curr))
+                mutatee = self.mutate(tree, data)
                 newPopulation.append(mutatee)
-
-
-            print(len(newPopulation))
             
             
             population = newPopulation
             
 
-            print(min(population, key = lambda t: t.fitness).toString())
+            # print(min(population, key = lambda t: t.fitness).toString())
             print(min(population, key = lambda t: t.fitness).fitness)
 
 
@@ -346,10 +347,16 @@ def main():
     #     data.append((.66, 18))
 
     
-    winner = player.symbReg(100, 1, trainingArray)
+    # winner = player.symbReg(100, 30, trainingArray)
 
-    print (winner.toString())
-    print(winner.fitness)
+    # print (winner.toString())
+    # print(winner.fitness)
+
+    # print("Test Set")
+    # print(winner.findFitness(testArray))
+
+    # tree = ExpressionTree.ExpressionTree(testArray)
+    # print(tree.toString())
     
 
     
@@ -357,15 +364,16 @@ def main():
 
     # population = []
 
-    # for i in range (10):
+    # for i in range (100):
     #     tree = ExpressionTree.ExpressionTree(trainingArray)
 
     #     population.append(tree)
 
         # print (tree.findFitness(trainingArray))
 
-    # tree = ExpressionTree.ExpressionTree(trainingArray)
+    tree = ExpressionTree.ExpressionTree(trainingArray)
     # treeb = ExpressionTree.ExpressionTree(trainingArray)
+    print(tree.toString())
 
     # setty = player.crossOver(tree, treeb,trainingArray)
 

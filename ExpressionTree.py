@@ -12,11 +12,13 @@ class ExpressionTree:
 
     operands = {"+", "-", "/", "*"}
     #Discussion about multiply and divide being basically the same thing so we cacn add the zero if we get rid of divide
-    leafVals = {"-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3","4", "5"}
+    # leafVals = {"-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3","4", "5"}
+    leafVals = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
+
 
     def __init__(self, data):
         #Depth cite that paper later
-        depth = random.randint(1, 10)
+        depth = random.randint(1, 16)
         self.root = Node.Node()
 
         curr = self.root
@@ -24,10 +26,11 @@ class ExpressionTree:
         self.treeBrancher(curr, depth, depth)
 
         self.nodeFiller(curr)
+        self.expression = self.toString()
+
 
         self.fitness = self.findFitness(data)
 
-        # self.expression = self.toString()
 
 
     def findDepth(self):
@@ -100,17 +103,17 @@ class ExpressionTree:
             self.nodeFiller(node.rightChild)
 
     # Possibly naive implementation
-    # def expSolver(self, val):
-    #     exp = self.expression.replace("x", str(val))
+    def expSolver(self, val):
+        exp = self.expression.replace("x", str(val))
 
-    #     # We Need to catch divisions by zero, I took out the zero as of now
-    #     try:
-    #         result = eval(exp)
+        # We Need to catch divisions by zero, I took out the zero as of now
+        try:
+            result = eval(exp)
 
-    #     except ZeroDivisionError:
-    #         return sys.maxsize
+        except ZeroDivisionError:
+            return sys.maxsize
 
-    #     return result
+        return result
 
     def evaluateExpressionTree(self, root, val): 
   
@@ -155,7 +158,7 @@ class ExpressionTree:
         y_true = []
         y_pred = []
         for i in range(len(data)):
-            y_pred.append(self.evaluateExpressionTree(self.root,data[i][0]))
+            y_pred.append(self.expSolver( data[i][0]))
             y_true.append(data[i][1])
             # result = (self.evaluateExpressionTree(self.root,data[i][0]) - data[i][1] ) ** 2
 
@@ -167,11 +170,36 @@ class ExpressionTree:
         self.root.PrintTree()
         print()
 
+    def stringHelper2(self, output, root): 
+        if (root.leftChild == None and root.rightChild == None):
+            output.write(root.nodeValue)
+        else:
+            output.write("(")
+            self.stringHelper2(output, root.leftChild)
+            output.write(root.nodeValue)
+            self.stringHelper2(output, root.rightChild)
+            output.write(")")
+
+  
+    #        private static void inorderPrintTree(Node root) {
+    #     if (root.isLeaf())
+    #         System.out.print(root.contents);
+    #     else {
+    #         // internal node - an operator
+    #         System.out.print("(");
+    #         inorderPrintTree(root.left);
+    #         System.out.print(" " + root.contents + " ");
+    #         inorderPrintTree(root.right);
+    #         System.out.print(")");
+    #     }
+    # }
+
     def stringHelper(self, output, node):
         if node.leftChild:
             self.stringHelper(output, node.leftChild)
         # print(node.nodeValue , end='')
         output.write(node.nodeValue)
+        
 
         if node.rightChild:
             # node.rightChild.PrintTree()
@@ -206,9 +234,9 @@ class ExpressionTree:
     def toString(self):
 
         output = io.StringIO()
-
+        # output = ""
         # self.root.PrintTree()
-        self.stringHelper(output, self.root)
+        self.stringHelper2(output, self.root)
 
         contents = output.getvalue()
 

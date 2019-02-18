@@ -13,6 +13,7 @@ class Node:
         self.nodeValue = nodeValue
 
     def PrintTree(self):
+    
         if self.leftChild:
             self.leftChild.PrintTree()
         print(self.nodeValue , end='')
