@@ -18,7 +18,7 @@ class ExpressionTree:
 
     def __init__(self, data):
         # Depth cite that paper later
-        depth = random.randint(1, 16)
+        depth = random.randint(1, 10)
         self.root = Node.Node()
 
         curr = self.root

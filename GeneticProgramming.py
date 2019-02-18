@@ -207,7 +207,7 @@ class GeneticProgramming:
 
             newPopulation = []
 
-            while (len(newPopulation) <= 88):
+            while (len(newPopulation) <= 188):
                 
                 champions = self.tournamentSelection(population)
 
@@ -256,9 +256,9 @@ class GeneticProgramming:
             
             population = newPopulation
             
-
-            # print(min(population, key = lambda t: t.fitness).toString())
-            print(min(population, key = lambda t: t.fitness).fitness)
+            minnie = min(population, key = lambda t: t.fitness)
+            print (minnie.toString())
+            print(minnie.fitness)
 
 
             # for i in range(len(champions)):
@@ -347,16 +347,16 @@ def main():
     #     data.append((.66, 18))
 
     
-    # winner = player.symbReg(100, 30, trainingArray)
+    winner = player.symbReg(200, 30, trainingArray)
 
-    # print (winner.toString())
-    # print(winner.fitness)
+    print (winner.toString())
+    print(winner.fitness)
 
-    # print("Test Set")
-    # print(winner.findFitness(testArray))
+    print("Test Set")
+    print(winner.findFitness(testArray))
 
-    # tree = ExpressionTree.ExpressionTree(testArray)
-    # print(tree.toString())
+    tree = ExpressionTree.ExpressionTree(testArray)
+    print(tree.toString())
     
 
     
@@ -371,9 +371,9 @@ def main():
 
         # print (tree.findFitness(trainingArray))
 
-    tree = ExpressionTree.ExpressionTree(trainingArray)
+    # tree = ExpressionTree.ExpressionTree(trainingArray)
     # treeb = ExpressionTree.ExpressionTree(trainingArray)
-    print(tree.toString())
+    # print(tree.toString())
 
     # setty = player.crossOver(tree, treeb,trainingArray)
 
