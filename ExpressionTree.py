@@ -154,17 +154,14 @@ class ExpressionTree:
         for i in range(len(data)):
             y_pred.append(self.evaluateExpressionTree(self.root, data[i][0]))
             y_true.append(data[i][1])
-            # result = (self.evaluateExpressionTree(self.root,data[i][0]) - data[i][1] ) ** 2
-
-            # result = (mean_squared_error( data[i][1] , self.evaluateExpressionTree(self.root,data[i][0])))
-        # return fitness/len(data)
+          
         return mean_squared_error(y_true, y_pred)
 
     def PrintTree(self):
         self.root.PrintTree()
         print()
 
-    def stringHelper2(self, output, root):
+    def stringHelper(self, output, root):
         if (root.leftChild == None and root.rightChild == None):
             output.write(root.nodeValue)
         else:
@@ -174,61 +171,13 @@ class ExpressionTree:
             self.stringHelper2(output, root.rightChild)
             output.write(")")
 
-    #        private static void inorderPrintTree(Node root) {
-    #     if (root.isLeaf())
-    #         System.out.print(root.contents);
-    #     else {
-    #         // internal node - an operator
-    #         System.out.print("(");
-    #         inorderPrintTree(root.left);
-    #         System.out.print(" " + root.contents + " ");
-    #         inorderPrintTree(root.right);
-    #         System.out.print(")");
-    #     }
-    # }
 
-    def stringHelper(self, output, node):
-        if node.leftChild:
-            self.stringHelper(output, node.leftChild)
-        # print(node.nodeValue , end='')
-        output.write(node.nodeValue)
-
-        if node.rightChild:
-            # node.rightChild.PrintTree()
-            self.stringHelper(output, node.rightChild)
-
-    # def cloneTree(self):
-    #     newTree = ExpressionTree()
-
-    #     newRoot = copy.copy(self.root)
-
-    #     self.cloneTreeHelper(newRoot)
-
-    #     newTree.root = newRoot
-
-    #     newTree.expression = newTree.toString()
-    #     return newTree
-
-    # def cloneTreeHelper(self, root):
-
-    #     if (root == None):
-    #         return root
-    #     temp = copy.copy(root)
-
-    #     if root.leftChild:
-    #         temp.leftChild = self.cloneTreeHelper(root.leftChild)
-
-    #     if root.rightChild:
-    #         temp.rightChild = self.cloneTreeHelper(root.rightChild)
-
-    #     return temp
 
     def toString(self):
 
         output = io.StringIO()
-        # output = ""
-        # self.root.PrintTree()
-        self.stringHelper2(output, self.root)
+        
+        self.stringHelper(output, self.root)
 
         contents = output.getvalue()
 
@@ -259,37 +208,5 @@ def main():
 
         # print (tree.expression)
 
-    # temp = "9"
-
-    # string = "x*x/4-1*2+3/6-4*x/x-9*1+x+x*x*5"
-
-    # print (string.replace('x', '69'))
-
-    # node = Node.Node("*")
-
-    # nodeRight = Node.Node("+")
-
-    # nodeChildRight = Node.Node("2")
-
-    # nodeChildRight2 = Node.Node("5")
-
-    # nodeLeft = Node.Node("125")
-
-    # node.insertRight(nodeRight)
-
-    # node.insertLeft(nodeLeft)
-
-    # nodeRight.insertRight(nodeChildRight)
-
-    # nodeRight.insertLeft(nodeChildRight2)
-
-    # tree = ExpressionTree(node)
-
-    # tree.PrintTree()
-
-    # # print (temp in tree.operands)
-    # print(node.isOperand())
-
-    # print(nodeChildRight2.isOperand())
 if __name__ == "__main__":
     main()

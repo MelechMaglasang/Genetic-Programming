@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import sklearn
 from sklearn.model_selection import train_test_split
+import csv
 
 
 
@@ -257,8 +258,8 @@ class GeneticProgramming:
             population = newPopulation
             
             minnie = min(population, key = lambda t: t.fitness)
-            print (minnie.toString())
-            print(minnie.fitness)
+            # print (minnie.toString())
+            # print(minnie.fitness)
 
 
             # for i in range(len(champions)):
