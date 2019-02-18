@@ -84,8 +84,8 @@ class GeneticProgramming:
         newTreeB.fitness = newTreeB.findFitness(data)
 
 
-        newTreeA.expression = newTreeA.toString()
-        newTreeB.expression = newTreeB.toString()
+        # newTreeA.expression = newTreeA.toString()
+        # newTreeB.expression = newTreeB.toString()
             
         return (newTreeA, newTreeB)
 
@@ -128,7 +128,7 @@ class GeneticProgramming:
         else:
             mutatee.rightChild = mutagen
 
-        newTree.expression = newTree.toString()
+        # newTree.expression = newTree.toString()
         newTree.fitness = newTree.findFitness(data)
             
         return newTree

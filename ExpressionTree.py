@@ -8,16 +8,16 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
+
 class ExpressionTree:
 
     operands = {"+", "-", "/", "*"}
-    #Discussion about multiply and divide being basically the same thing so we cacn add the zero if we get rid of divide
-    # leafVals = {"-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3","4", "5"}
-    leafVals = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
-
+    # Discussion about multiply and divide being basically the same thing so we cacn add the zero if we get rid of divide
+    leafVals = {"-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3","4", "5"}
+    # leafVals = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
 
     def __init__(self, data):
-        #Depth cite that paper later
+        # Depth cite that paper later
         depth = random.randint(1, 16)
         self.root = Node.Node()
 
@@ -26,12 +26,9 @@ class ExpressionTree:
         self.treeBrancher(curr, depth, depth)
 
         self.nodeFiller(curr)
-        self.expression = self.toString()
-
+        # self.expression = self.toString()
 
         self.fitness = self.findFitness(data)
-
-
 
     def findDepth(self):
         return self.root.findDepth(self.root)
@@ -68,7 +65,6 @@ class ExpressionTree:
 
         return array
 
-
     def grabNodesHelper(self, currDepth, depth, node, array):
 
         if(node == None or currDepth > depth):
@@ -82,7 +78,6 @@ class ExpressionTree:
             self.grabNodesHelper(currDepth+1, depth, node.leftChild, array)
             self.grabNodesHelper(currDepth+1, depth, node.rightChild, array)
 
-          
     def nodeFiller(self, node):
         if node.leftChild:
             self.nodeFiller(node.leftChild)
@@ -95,70 +90,69 @@ class ExpressionTree:
             else:
                 node.nodeValue = random.sample(ExpressionTree.leafVals, 1)[0]
 
-                
         else:
             node.nodeValue = random.sample(ExpressionTree.operands, 1)[0]
 
         if node.rightChild:
             self.nodeFiller(node.rightChild)
 
-    # Possibly naive implementation
-    def expSolver(self, val):
-        exp = self.expression.replace("x", str(val))
+    # # Possibly naive implementation
+    # def expSolver(self, val):
+    #     exp = self.expression.replace("x", str(val))
 
-        # We Need to catch divisions by zero, I took out the zero as of now
-        try:
-            result = eval(exp)
+    #     # We Need to catch divisions by zero, I took out the zero as of now
+    #     try:
+    #         result = eval(exp)
 
-        except ZeroDivisionError:
-            return sys.maxsize
+    #     except ZeroDivisionError:
+    #         return sys.maxsize
 
-        return result
+    #     return result
 
-    def evaluateExpressionTree(self, root, val): 
-  
-        # empty tree 
-        if root is None: 
+    def evaluateExpressionTree(self, root, val):
+
+        # empty tree
+        if root is None:
             return 0
-    
-        # leaf node 
-        if root.leftChild is None and root.rightChild is None: 
+
+        # leaf node
+        if root.leftChild is None and root.rightChild is None:
             if (root.nodeValue == 'x'):
                 return val
             else:
-                return int(root.nodeValue) 
-    
-        # evaluate left tree 
-        leftSum = self.evaluateExpressionTree(root.leftChild,val) 
-    
-        # evaluate right tree 
-        rightSum = self.evaluateExpressionTree(root.rightChild,val) 
-    
-        # check which operation to apply 
-        if root.nodeValue == '+': 
+                return int(root.nodeValue)
+
+        # evaluate left tree
+        leftSum = self.evaluateExpressionTree(root.leftChild, val)
+
+        # evaluate right tree
+        rightSum = self.evaluateExpressionTree(root.rightChild, val)
+
+        # check which operation to apply
+        if root.nodeValue == '+':
             return leftSum + rightSum
-        
-        elif root.nodeValue == '-': 
-            return leftSum - rightSum 
-        
-        elif root.nodeValue == '*': 
+
+        elif root.nodeValue == '-':
+            return leftSum - rightSum
+
+        elif root.nodeValue == '*':
             return leftSum * rightSum
-        
+
         else:
             if rightSum == 0:
                 return 1
-            else: 
+            else:
                 return leftSum / rightSum
 
     # These print an in order traversal of the possible expression
 
     def findFitness(self, data):
         # fitness = 0
-        
+
         y_true = []
         y_pred = []
         for i in range(len(data)):
-            y_pred.append(self.expSolver( data[i][0]))
+            y_pred.append(self.evaluateExpressionTree(self.root, data[i][0]))
             y_true.append(data[i][1])
             # result = (self.evaluateExpressionTree(self.root,data[i][0]) - data[i][1] ) ** 2
 
@@ -170,7 +164,7 @@ class ExpressionTree:
         self.root.PrintTree()
         print()
 
-    def stringHelper2(self, output, root): 
+    def stringHelper2(self, output, root):
         if (root.leftChild == None and root.rightChild == None):
             output.write(root.nodeValue)
         else:
@@ -180,7 +174,6 @@ class ExpressionTree:
             self.stringHelper2(output, root.rightChild)
             output.write(")")
 
-  
     #        private static void inorderPrintTree(Node root) {
     #     if (root.isLeaf())
     #         System.out.print(root.contents);
@@ -199,7 +192,6 @@ class ExpressionTree:
             self.stringHelper(output, node.leftChild)
         # print(node.nodeValue , end='')
         output.write(node.nodeValue)
-        
 
         if node.rightChild:
             # node.rightChild.PrintTree()
@@ -218,14 +210,14 @@ class ExpressionTree:
     #     return newTree
 
     # def cloneTreeHelper(self, root):
-  
+
     #     if (root == None):
     #         return root
     #     temp = copy.copy(root)
 
     #     if root.leftChild:
     #         temp.leftChild = self.cloneTreeHelper(root.leftChild)
-        
+
     #     if root.rightChild:
     #         temp.rightChild = self.cloneTreeHelper(root.rightChild)
 
@@ -257,16 +249,13 @@ def main():
 
     population = []
 
-    for i in range (100):
+    for i in range(100):
         tree = ExpressionTree()
 
         population.append(tree)
 
     for tree in population:
-        print (tree.evaluateExpressionTree(tree.root, .5))
-
-
-    
+        print(tree.evaluateExpressionTree(tree.root, .5))
 
         # print (tree.expression)
 
@@ -302,7 +291,5 @@ def main():
     # print(node.isOperand())
 
     # print(nodeChildRight2.isOperand())
-
-
 if __name__ == "__main__":
     main()
