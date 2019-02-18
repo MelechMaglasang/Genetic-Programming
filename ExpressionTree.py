@@ -166,9 +166,9 @@ class ExpressionTree:
             output.write(root.nodeValue)
         else:
             output.write("(")
-            self.stringHelper2(output, root.leftChild)
+            self.stringHelper(output, root.leftChild)
             output.write(root.nodeValue)
-            self.stringHelper2(output, root.rightChild)
+            self.stringHelper(output, root.rightChild)
             output.write(")")
 
 

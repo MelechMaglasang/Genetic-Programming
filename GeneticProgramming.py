@@ -9,6 +9,7 @@ import numpy as np
 import sklearn
 from sklearn.model_selection import train_test_split
 import csv
+import os.path
 
 
 
@@ -142,57 +143,19 @@ class GeneticProgramming:
         sampleTree2 = random.sample(population, int(len(population) * .1 ))
 
 
-
-        # random.shuffle(sampleTrees)
-
-
-
-        # S = [1,2,3,4,5,6,7]
-        
-        # index = random.randint(1, len(sampleTrees)-1)
-        # List1 = sampleTrees[index:]
-        # List2 = sampleTrees[:index]
-
-        # for tree in population:
-
-        #     fitness = tree.findFitness(data)
-        #     treeScorePair = (tree,fitness)
-
-        #     if (bestHere == None or bestHere[1] > treeScorePair[1]):
-        #         bestHere = treeScorePair
-            
-
-        #     bigData.append(treeScorePair)
-
-        # n = int (len(population)/2)
-  
-        # using list comprehension 
-        # final = [population[i * n:(i + 1) * n] for i in range((len(population) + n - 1) // n )]
-
-        # print(final[0])
-
         winners = []
         # winners.append(sampleTree1)
         # winners.append(sampleTree2)
         winners.append(min(sampleTree1, key = lambda t: t.fitness))
         winners.append(min(sampleTree2, key = lambda t: t.fitness))
-        # losers = []
-        # for section in final:
-        #     winners.append(min(section, key = lambda t: t.fitness))
-            # losers.append(max(section, key = lambda t: t.fitness))
-
-
-        # if (winners[0].fitness > winners[1].fitness):
-        #     bestHere = winners[1]
-        # else:
-        #     bestHere = winners[0]
-        # print ("winners",winners[0].fitness, winners[1].fitness)
+     
 
         return winners
 
         
 
     def symbReg(self, size, gens, data):
+
 
         population = []
 
@@ -202,118 +165,62 @@ class GeneticProgramming:
             population.append(tree)
         
         bestEver = None
-        #Maybe do a while loop but for now im doing a for loop
-        for m in range(gens):
-            print(m)
 
-            newPopulation = []
-
-            while (len(newPopulation) <= 188):
-                
-                champions = self.tournamentSelection(population)
-
-                childTrees = self.crossOver(champions[0], champions[1],data)
-
-                for child in childTrees:
-                    newPopulation.append(child)
-
-                # for champ in champions:
-                #     newPopulation.append(champ)
-        
-                # treesToMutate = random.sample(population, int (len(population) * .20 ))
-
-            # for i in range(5):
-            #     currTree = min(treesToMutate, key = lambda t: t.fitness)
-
-            #     newTree = self.mutate(currTree,data)
-
-            #     newPopulation.append(newTree)
-            #     treesToMutate.pop(currTree)
-
-            bestInGeneration = min(population, key = lambda t: t.fitness)
-
-            population.pop(population.index(bestInGeneration))
-
-            if (bestEver == None or bestEver.fitness > bestInGeneration.fitness):
-                bestEver = bestInGeneration
-            newPopulation.append(bestEver)
-
-
-            for i in range(4):
-                curr = min(population, key = lambda t: t.fitness)
-
-                population.pop(population.index(curr))
-                newPopulation.append(curr)
-
-            randoMutates = random.sample(population, 5)
-
-            for tree in randoMutates:
-                # curr = min(population, key = lambda t: t.fitness)
-
-                # population.pop(population.index(curr))
-                mutatee = self.mutate(tree, data)
-                newPopulation.append(mutatee)
+       
+        filename = "dataset1runs"
+        fileExists = os.path.isfile(filename)
+        with open (filename, 'a') as csvfile:
             
-            
-            population = newPopulation
-            
-            minnie = min(population, key = lambda t: t.fitness)
-            # print (minnie.toString())
-            # print(minnie.fitness)
+            writer = csv.writer(csvfile, delimiter=' ',quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
+            writer.writerow("RUN")
+            #Maybe do a while loop but for now im doing a for loop
+            for m in range(gens):
+                print(m)
 
-            # for i in range(len(champions)):
-            #     currTree = champions[i][0]
+                newPopulation = []
 
-            #     otherTrees = champions[:]
-
-            #     otherTrees.pop(i)
-
-            #     for j in range(len(otherTrees)):
-            #         otherTree = champions[i][0]
+                while (len(newPopulation) <= 188):
                     
-            #         for k in range(4):
-            #             childrenTrees = self.crossOver(currTree, otherTree)
+                    champions = self.tournamentSelection(population)
 
-            #             for child in childrenTrees:
-            #                 if (random.randint(1,1000) == 42):
-            #                     mutatedChild = self.mutate(child)
-            #                     newPopulation.append(mutatedChild)
-            #                 else:
-            #                     newPopulation.append(child)
+                    childTrees = self.crossOver(champions[0], champions[1],data)
 
+                    for child in childTrees:
+                        newPopulation.append(child)
 
+                bestInGeneration = min(population, key = lambda t: t.fitness)
 
-            # #mate using the best ever seen
-            # championTree = bestEver[0]
+                population.pop(population.index(bestInGeneration))
 
-            # for i in range(len(champions)):
-            #     otherTree = champions[i][0]
-
-            #     childrenTrees = self.crossOver(championTree, otherTree)
-
-            #     for child in childrenTrees:
-            #         if (random.randint(1,1000) == 42):
-            #             child = self.mutate(child)
+                if (bestEver == None or bestEver.fitness > bestInGeneration.fitness):
+                    bestEver = bestInGeneration
+                newPopulation.append(bestEver)
 
 
-            #     childTreeA = childrenTrees[0]
-            #     childTreeB = childrenTrees[1]
+                for i in range(4):
+                    curr = min(population, key = lambda t: t.fitness)
+
+                    population.pop(population.index(curr))
+                    newPopulation.append(curr)
+
+                randoMutates = random.sample(population, 5)
+
+                for tree in randoMutates:
+                    # curr = min(population, key = lambda t: t.fitness)
+
+                    # population.pop(population.index(curr))
+                    mutatee = self.mutate(tree, data)
+                    newPopulation.append(mutatee)
                 
                 
-            #     if (childTreeA.findFitness(data) <= childTreeB.findFitness(data) ):
-            #         newPopulation.append(childTreeA)
-            #     else:
-            #         newPopulation.append(childTreeB)
-
-    
-
-        # finalFitness = []
-
-        # for tree in population:
-        #     finalFitness.append((tree, tree.findFitness(data)))
-
-        # # print(len(finalPopulation))
+                population = newPopulation
+                
+                minnie = min(population, key = lambda t: t.fitness)
+                if (minnie.fitness < 0.0009):
+                    break
+                writer.writerow({m, minnie.fitness, minnie.toString()})
+   
 
         return min(population, key = lambda t: t.fitness)
 
