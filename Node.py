@@ -6,8 +6,6 @@ class Node:
 
     def __init__(self, nodeValue="&"):
 
-        # self.depth = -1
-
         self.leftChild = None
         self.rightChild = None
         self.nodeValue = nodeValue

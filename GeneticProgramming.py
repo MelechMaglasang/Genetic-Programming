@@ -169,7 +169,8 @@ class GeneticProgramming:
 
                 newPopulation = []
 
-                while (len(newPopulation) <= size-18):
+                #Saving space for BestEver, top 8, and 5 mutatees. Must change if changing starting pop
+                while (len(newPopulation) < (size - 15)):
                     
                     champions = self.tournamentSelection(population)
 
@@ -178,6 +179,7 @@ class GeneticProgramming:
                     for child in childTrees:
                         newPopulation.append(child)
 
+                
                 bestInGeneration = min(population, key = lambda t: t.fitness)
 
                 population.pop(population.index(bestInGeneration))
@@ -185,13 +187,13 @@ class GeneticProgramming:
                 if (bestEver == None or bestEver.fitness > bestInGeneration.fitness):
                     bestEver = bestInGeneration
                 newPopulation.append(bestEver)
-
-                for i in range(10):
+                
+                for i in range(8):
                     curr = min(population, key = lambda t: t.fitness)
 
                     population.pop(population.index(curr))
                     newPopulation.append(curr)
-
+                
                 randoMutates = random.sample(population, 5)
 
                 for tree in randoMutates:
@@ -205,8 +207,6 @@ class GeneticProgramming:
                 if (minnie.fitness < 0.0009):
                     break
                 writer.writerow({m, minnie.fitness, minnie.toString()})
-
-                print(len(population))
                 
         return min(population, key = lambda t: t.fitness)
 
@@ -221,7 +221,7 @@ def main():
     
     X = np.random.randint(0, 100 + 1, n_samples)
     #Guassian noise may need to be bumped up
-    Y = -1*X**2 + X + np.random.normal(scale=1000, size=(n_samples))
+    Y = -1*X**2 + X + np.random.normal(loc=50, scale=500, size=(n_samples))
     # Y = math.sin(X) + np.random.normal(scale=100, size=(n_samples))
 
     # data = np.zeros(2,n_samples)
