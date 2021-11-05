@@ -11,10 +11,11 @@ from sklearn.metrics import mean_squared_error
 
 class ExpressionTree:
 
-    operands = {"+", "-", "/", "*"}
+    # operands = {"+", "-", "/", "*", "**"}
+    operands = {"+", "-", "*"}
     # Discussion about multiply and divide being basically the same thing so we cacn add the zero if we get rid of divide
-    leafVals = {"-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3","4", "5"}
-    # leafVals = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
+    #leafVals = {"-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3","4", "5"}
+    leafVals = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
 
     def __init__(self, data):
         # Depth cite that paper later

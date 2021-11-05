@@ -2,8 +2,7 @@ import ExpressionTree
 import Node
 import random
 import copy
-
-#For csv parsing
+import math
 import pandas as pd
 import numpy as np
 import sklearn
@@ -16,8 +15,7 @@ import os.path
 
 class GeneticProgramming:
 
-    def __init__(self, numGen):
-        self.numGen = numGen
+        
         
     def crossOver(self, treeA, treeB,data):
         depthA = treeA.findDepth()
@@ -84,10 +82,6 @@ class GeneticProgramming:
 
         newTreeA.fitness = newTreeA.findFitness(data)
         newTreeB.fitness = newTreeB.findFitness(data)
-
-
-        # newTreeA.expression = newTreeA.toString()
-        # newTreeB.expression = newTreeB.toString()
             
         return (newTreeA, newTreeB)
 
@@ -136,18 +130,15 @@ class GeneticProgramming:
         return newTree
 
     def tournamentSelection(self, population):
-        #Assuming data will be formatted in the way i want it to
-
         # print (len(population) / 5)
-        sampleTree1 = random.sample(population, int(len(population) * .1 ))
-        sampleTree2 = random.sample(population, int(len(population) * .1 ))
+        samplePop1 = random.sample(population, int(len(population) * .1 ))
+        samplePop2 = random.sample(population, int(len(population) * .1 ))
 
 
         winners = []
-        # winners.append(sampleTree1)
-        # winners.append(sampleTree2)
-        winners.append(min(sampleTree1, key = lambda t: t.fitness))
-        winners.append(min(sampleTree2, key = lambda t: t.fitness))
+
+        winners.append(min(samplePop1, key = lambda t: t.fitness))
+        winners.append(min(samplePop2, key = lambda t: t.fitness))
      
 
         return winners
@@ -155,7 +146,6 @@ class GeneticProgramming:
         
 
     def symbReg(self, size, gens, data):
-
 
         population = []
 
@@ -166,7 +156,6 @@ class GeneticProgramming:
         
         bestEver = None
 
-       
         filename = "dataset1runs"
         fileExists = os.path.isfile(filename)
         with open (filename, 'a') as csvfile:
@@ -174,13 +163,13 @@ class GeneticProgramming:
             writer = csv.writer(csvfile, delimiter=' ',quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
             writer.writerow("RUN")
-            #Maybe do a while loop but for now im doing a for loop
+            
             for m in range(gens):
                 print(m)
 
                 newPopulation = []
 
-                while (len(newPopulation) <= 188):
+                while (len(newPopulation) <= size-18):
                     
                     champions = self.tournamentSelection(population)
 
@@ -197,8 +186,7 @@ class GeneticProgramming:
                     bestEver = bestInGeneration
                 newPopulation.append(bestEver)
 
-
-                for i in range(4):
+                for i in range(10):
                     curr = min(population, key = lambda t: t.fitness)
 
                     population.pop(population.index(curr))
@@ -207,21 +195,19 @@ class GeneticProgramming:
                 randoMutates = random.sample(population, 5)
 
                 for tree in randoMutates:
-                    # curr = min(population, key = lambda t: t.fitness)
-
-                    # population.pop(population.index(curr))
+                
                     mutatee = self.mutate(tree, data)
                     newPopulation.append(mutatee)
                 
-                
                 population = newPopulation
-                
+
                 minnie = min(population, key = lambda t: t.fitness)
                 if (minnie.fitness < 0.0009):
                     break
                 writer.writerow({m, minnie.fitness, minnie.toString()})
-   
 
+                print(len(population))
+                
         return min(population, key = lambda t: t.fitness)
 
 
@@ -229,77 +215,48 @@ class GeneticProgramming:
 
 def main():
 
-    data = pd.read_csv('dataset1.csv')
+    # np.random.seed(0)
 
-    # print(len(data))
+    n_samples = 500
+    
+    X = np.random.randint(0, 100 + 1, n_samples)
+    #Guassian noise may need to be bumped up
+    Y = -1*X**2 + X + np.random.normal(scale=1000, size=(n_samples))
+    # Y = math.sin(X) + np.random.normal(scale=100, size=(n_samples))
+
+    # data = np.zeros(2,n_samples)
+
+    data = np.column_stack((X,Y))
+    
+
     trainingSet, testSet = train_test_split(data, test_size=0.2)
-    
 
-    player = GeneticProgramming(100)
 
-    # trainingArray = np.array()
-    # testArray = np.array()
+    player = GeneticProgramming()
 
-    
+    trainingArray = trainingSet
 
-    # for index, row in trainingSet.iterrows():
-    #     trainingArray.append((row['x'],row['f(x)']))
-    trainingArray = trainingSet.values
 
-    # trainingArray = [[16.16],[16,16]]
-    testArray = testSet.values
-
-    # data = []
-
-    # for i in range(20):
-    #     data.append((.66, 18))
-
-    
-    winner = player.symbReg(200, 30, trainingArray)
+    #Size of forest, generations, data)
+    winner = player.symbReg(200, 20, trainingSet)
 
     print (winner.toString())
     print(winner.fitness)
 
     print("Test Set")
-    print(winner.findFitness(testArray))
+    print(winner.findFitness(testSet))
 
-    tree = ExpressionTree.ExpressionTree(testArray)
-    print(tree.toString())
+
+    filename = "dataset1runs"
+    fileExists = os.path.isfile(filename)
+    with open (filename, 'a') as csvfile:
+            
+        writer = csv.writer(csvfile, delimiter=' ',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+
+        writer.writerow({"winner", winner.fitness, winner.toString()})
+        writer.writerow({"Test", winner.findFitness(testSet)})
+       
     
-
-    
-    # print (data.loc[0]["x"])
-
-    # population = []
-
-    # for i in range (100):
-    #     tree = ExpressionTree.ExpressionTree(trainingArray)
-
-    #     population.append(tree)
-
-        # print (tree.findFitness(trainingArray))
-
-    # tree = ExpressionTree.ExpressionTree(trainingArray)
-    # treeb = ExpressionTree.ExpressionTree(trainingArray)
-    # print(tree.toString())
-
-    # setty = player.crossOver(tree, treeb,trainingArray)
-
-    # print(tree.fitness)
-    # print(setty[0].fitness)
-
-    # print(treeb.fitness)
-    # print(setty[1].fitness)
-
-
-
-    # print (player.tournamentSelection(population))
-    # tree.findFitness(data)
-
-
-    
-
-
 
 
 
