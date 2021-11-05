@@ -221,7 +221,7 @@ def main():
     
     X = np.random.randint(0, 100 + 1, n_samples)
     #Guassian noise may need to be bumped up
-    Y = -1*X**2 + X + np.random.normal(loc=50, scale=500, size=(n_samples))
+    Y =  3*X**3 + 8*X**2 + 7*X + 9 + np.random.normal(loc=50, scale=100, size=(n_samples))
     # Y = math.sin(X) + np.random.normal(scale=100, size=(n_samples))
 
     # data = np.zeros(2,n_samples)
