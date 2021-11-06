@@ -38,10 +38,14 @@ class GeneticProgramming:
         else:
             crossPointsB = [newTreeB.root]
 
-
+        #Bug, just return the parents
+        # try:
         crossingA = random.choice(crossPointsA)
 
         crossingB = random.choice(crossPointsB)
+        # except:
+     
+        #     return (treeA, treeB)
 
         if (depthB == 1 or depthA == 1):
             if (depthA == depthB):
@@ -219,12 +223,10 @@ def main():
 
     n_samples = 500
     
-    X = np.random.randint(0, 100 + 1, n_samples)
-    #Guassian noise may need to be bumped up
+    X = np.random.randint(0, 100, n_samples)
     Y =  3*X**3 + 8*X**2 + 7*X + 9 + np.random.normal(loc=50, scale=100, size=(n_samples))
-    # Y = math.sin(X) + np.random.normal(scale=100, size=(n_samples))
-
-    # data = np.zeros(2,n_samples)
+    # X = np.random.randint(-1, 80, n_samples)
+    # Y = 1000*np.sin(.05*X) + np.random.normal(scale=50, size=(n_samples))
 
     data = np.column_stack((X,Y))
     
