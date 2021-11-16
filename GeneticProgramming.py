@@ -149,7 +149,7 @@ class GeneticProgramming:
 
         
 
-    def symbReg(self, size, gens, data):
+    def symbReg(self, size, gens, data, noise):
 
         population = []
 
@@ -157,6 +157,13 @@ class GeneticProgramming:
             tree = ExpressionTree.ExpressionTree(data)
 
             population.append(tree)
+
+
+        #Set Parameters:
+        numMutate = size * 0.025
+        numCarryOver = (size * 0.05) - 1 #Accounts for best ever tree
+
+        print(numMutate, numCarryOver)
         
         bestEver = None
 
@@ -174,7 +181,7 @@ class GeneticProgramming:
                 newPopulation = []
 
                 #Saving space for BestEver, top 8, and 5 mutatees. Must change if changing starting pop
-                while (len(newPopulation) < (size - 15)):
+                while (len(newPopulation) < (size - (numMutate + numCarryOver))):
                     
                     champions = self.tournamentSelection(population)
 
@@ -192,13 +199,13 @@ class GeneticProgramming:
                     bestEver = bestInGeneration
                 newPopulation.append(bestEver)
                 
-                for i in range(8):
+                for i in range(math.ceil(numCarryOver)):
                     curr = min(population, key = lambda t: t.fitness)
 
                     population.pop(population.index(curr))
                     newPopulation.append(curr)
                 
-                randoMutates = random.sample(population, 5)
+                randoMutates = random.sample(newPopulation, math.ceil(numMutate))
 
                 for tree in randoMutates:
                 
@@ -207,8 +214,15 @@ class GeneticProgramming:
                 
                 population = newPopulation
 
+                #Fix ceil operation and cull the worst
+                while (len(population) > size):
+                    worstInGen = max(population, key = lambda t: t.fitness)
+                    population.pop(population.index(worstInGen))
+
+                print(len(population))
+
                 minnie = min(population, key = lambda t: t.fitness)
-                if (minnie.fitness < 0.0009):
+                if (minnie.fitness < noise**2):
                     break
                 writer.writerow({m, minnie.fitness, minnie.toString()})
                 
@@ -223,8 +237,9 @@ def main():
 
     n_samples = 500
     
+    #Doesn't really do well with constant values for Y, I think it has something to do with the tree structure for low nodes that resolve to 0
     X = np.random.randint(0, 100, n_samples)
-    Y =  3*X**3 + 8*X**2 + 7*X + 9 + np.random.normal(loc=50, scale=100, size=(n_samples))
+    Y =  -1*X**2  + np.random.normal(loc=50, scale=250, size=(n_samples))
     # X = np.random.randint(-1, 80, n_samples)
     # Y = 1000*np.sin(.05*X) + np.random.normal(scale=50, size=(n_samples))
 
@@ -236,11 +251,8 @@ def main():
 
     player = GeneticProgramming()
 
-    trainingArray = trainingSet
-
-
-    #Size of forest, generations, data)
-    winner = player.symbReg(200, 20, trainingSet)
+    #Size of forest, generations, data, noise)
+    winner = player.symbReg(100, 100, trainingSet, 250)
 
     print (winner.toString())
     print(winner.fitness)
@@ -259,9 +271,6 @@ def main():
         writer.writerow({"Test", winner.findFitness(testSet)})
        
     
-
-
-
 if __name__ == "__main__":
     main()
 

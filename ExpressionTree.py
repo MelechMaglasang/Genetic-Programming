@@ -148,8 +148,6 @@ class ExpressionTree:
     # These print an in order traversal of the possible expression
 
     def findFitness(self, data):
-        # fitness = 0
-
         y_true = []
         y_pred = []
         for i in range(len(data)):
